@@ -26,7 +26,7 @@ end
 
 ```elixir
     # Bucket size 10000, add 1000 tokens to bucket each second.
-    # This allows peaks of load in 10000 tokens (requests) in a moment stil keeping average load
+    # This allows peaks of load in 10000 tokens (requests) in a moment and still keeps average load
     # below 1000 tokens per second.
     {:ok, pid} = TokenBucket.start_link(10_000, 1_000)
 
