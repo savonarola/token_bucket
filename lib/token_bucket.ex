@@ -3,6 +3,8 @@ defmodule TokenBucket do
   Rate limiter implementing Token Bucket algorithm https://en.wikipedia.org/wiki/Token_bucket
   """
 
+  alias TokenBucket.TimeUnit
+
   use GenServer
 
   defmodule St do
@@ -26,7 +28,7 @@ defmodule TokenBucket do
   end
 
   def start_link(bucket_size, {fill_count, fill_interval}, options)
-      when is_number(bucket_size) and is_number(fill_count) and is_number(fill_interval) and
+      when is_number(bucket_size) and is_number(fill_count) and is_integer(fill_interval) and
              bucket_size > 0 and fill_count > 0 and fill_interval > 0 do
     GenServer.start_link(__MODULE__, [bucket_size, fill_count, fill_interval], options)
   end
@@ -37,12 +39,14 @@ defmodule TokenBucket do
 
   @impl true
   def init([bucket_size, fill_count, fill_interval]) do
+    native_fill_interval = :erlang.convert_time_unit(fill_interval, TimeUnit.ms(), :native)
+
     st = %St{
       bucket_size: float(bucket_size),
       tokens: float(bucket_size),
       fill_count: float(fill_count),
-      fill_interval: float(fill_interval),
-      time: time()
+      fill_interval: native_fill_interval,
+      time: :erlang.monotonic_time()
     }
 
     {:ok, st}
@@ -50,7 +54,7 @@ defmodule TokenBucket do
 
   @impl true
   def handle_call({:consume, size}, _from, st) do
-    new_st = update_bucket(st, time())
+    new_st = update_bucket(st, :erlang.monotonic_time())
 
     {new_tokens, reply} =
       if new_st.tokens >= size do
@@ -65,7 +69,7 @@ defmodule TokenBucket do
   defp update_bucket(st, now) do
     if time_to_fill?(st, now) do
       intervals_passed = fill_intervals_passed(st, now)
-      new_time = st.time + st.fill_interval * intervals_passed * 1_000_000
+      new_time = st.time + st.fill_interval * intervals_passed
       tokens_to_add = st.fill_count * intervals_passed
       new_tokens = min(st.bucket_size, st.tokens + tokens_to_add)
       %St{st | time: new_time, tokens: new_tokens}
@@ -78,15 +82,11 @@ defmodule TokenBucket do
     1.0 * n
   end
 
-  defp time do
-    :erlang.monotonic_time(:nanosecond)
-  end
-
   defp time_to_fill?(st, now_time) do
-    st.fill_interval * 1_000_000 <= now_time - st.time
+    st.fill_interval <= now_time - st.time
   end
 
   defp fill_intervals_passed(st, now) do
-    Float.floor((now - st.time) / (st.fill_interval * 1_000_000))
+    Float.floor((now - st.time) / st.fill_interval)
   end
 end
