@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/savonarola/token_bucket.svg?branch=master)](https://travis-ci.org/savonarola/token_bucket)
+[![Coverage Status](https://coveralls.io/repos/github/savonarola/token_bucket/badge.svg?branch=master)](https://coveralls.io/github/savonarola/token_bucket?branch=master)
 
 <a href="https://funbox.ru">
   <img src="http://funbox.ru/badges/sponsored_by_funbox_compact.svg" alt="Sponsored by FunBox" width=250 />
