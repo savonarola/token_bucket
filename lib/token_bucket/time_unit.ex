@@ -1,5 +1,4 @@
 defmodule TokenBucket.TimeUnit do
-
   otp_release = :erlang.system_info(:otp_release)
 
   case :string.to_integer(otp_release) do
@@ -16,5 +15,4 @@ defmodule TokenBucket.TimeUnit do
     _ ->
       raise "OTP version #{otp_release} is not supported"
   end
-
 end

@@ -43,4 +43,10 @@ defmodule TokenBucketTest do
 
     assert abs((expected_consumed - consumed) / expected_consumed) < 0.01
   end
+
+  test "start with default interval" do
+    {:ok, pid} = TokenBucket.start_link(2, 10)
+
+    assert true == TokenBucket.consume(pid, 1)
+  end
 end
