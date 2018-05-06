@@ -51,6 +51,13 @@ More precise tuning:
     false = TokenBucket.consume(pid)
 ```
 
+Using arbitrary `GenServer` options:
+
+```elixir
+    # Register locally as `:my_limiter`.
+    {:ok, pid} = TokenBucket.start_link(10_000, 1_000, name: :my_limiter)
+```
+
 ## LICENSE
 
 This software is licensed under [MIT License](LICENSE).
