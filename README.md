@@ -1,3 +1,9 @@
+[![Build Status](https://travis-ci.org/savonarola/token_bucket.svg?branch=master)](https://travis-ci.org/savonarola/token_bucket)
+
+<a href="https://funbox.ru">
+  <img src="http://funbox.ru/badges/sponsored_by_funbox_compact.svg" alt="Sponsored by FunBox" width=250 />
+</a>
+
 # TokenBucket
 
 Rate limiter implementing Token Bucket algorithm https://en.wikipedia.org/wiki/Token_bucket
